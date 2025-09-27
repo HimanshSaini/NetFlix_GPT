@@ -3,15 +3,14 @@ import Header from "./Header";
 import { checkValidData } from "../utils/validate";
 import { auth } from "../utils/firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice"; 
+import { BG } from "../utils/constants";
 
 const Login = () => {
   const [isSignInForm, setisSignInForm] = useState(true);   
   const [errorMessage, setErrorMessage] = useState(null);   
   
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   // using refs so inputs are uncontrolled (value is directly read)
@@ -24,7 +23,7 @@ const Login = () => {
   };
 
   const handleButtonClick = () => {
-    // --- Step 1: Validate input ---
+    //Validate input 
     const message = checkValidData(
       email.current.value,
       password.current.value
@@ -32,7 +31,6 @@ const Login = () => {
     setErrorMessage(message);
     if (message) return;  // stop if invalid input
 
-    // --- Step 2: Firebase Auth ---
     if (!isSignInForm) { 
       // --- Sign Up flow ---
       createUserWithEmailAndPassword(
@@ -44,15 +42,15 @@ const Login = () => {
         const user = userCredential.user;
         console.log('signup user-', user);
 
-        // ⚠️ updateProfile must be called immediately, otherwise Redux may get null displayName
+        // updateProfile must be called immediately, otherwise Redux may get null displayName
         updateProfile(user, {
           displayName: name.current.value,
           photoURL: null,  
         })
         .then(() => {
-          console.log('updated user-', user);
+          //console.log('updated user-', user);
 
-          // ⚠️ auth.currentUser is guaranteed to exist here
+          // auth.currentUser is guaranteed to exist here
           const { uid, email, displayName, photoURL } = auth.currentUser;
 
           // store user in Redux
@@ -64,9 +62,6 @@ const Login = () => {
               photoURL,
             })
           );
-
-          // navigate only after profile update is done
-          navigate("/browse");
         })
         .catch((error) => {
           
@@ -87,9 +82,7 @@ const Login = () => {
       )
       .then((userCredential) => {
         const user = userCredential.user;
-        console.log('signin user-', user);
-       
-        navigate("/browse");
+      //  console.log('signin user-', user);
       })
       .catch((error) => {
         setErrorMessage(error.code + "-" + error.message);
@@ -102,7 +95,7 @@ const Login = () => {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
-          src="https://assets.nflxext.com/ffe/siteui/vlv3/8d617e19-3c3c-4c28-8998-c9b14dbc7200/web/IN-en-20250901-TRIFECTA-perspective_48d84d4e-9558-46b8-a0f3-8b2dc8478431_large.jpg"
+          src={BG}
           alt="Background"
           className="h-full w-full object-cover"
         />
