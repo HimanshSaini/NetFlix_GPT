@@ -8,8 +8,14 @@ export const API_OPTIONS = {
   method: 'GET',
   headers: {
     accept: 'application/json',
-    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4M2Q5YThkOGU3YzY4M2Y3ZDZhNzllYjA3NDhjMDBhMyIsIm5iZiI6MTc1NzgzMTk2OC4yODcwMDAyLCJzdWIiOiI2OGM2NjMyMDU3MGE3ZDc5OWFhMGYxMTMiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.tb7GVs8JIuFhQSuYDnSVu0Xn6xRIDhIWtTP0A2Gg2xM'
+    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4M2Q5YThkOGU3YzY4M2Y3ZDZhNzllYjA3NDhjMDBhMyIsIm5iZiI6MTc1NzgzMTk2OC4yODcwMDAyLCJzdWIiOiI2OGM2NjMyMDU3MGE3ZDc5OWFhMGYxMTMiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.tb7GVs8JIuFhQSuYDnSVu0Xn6xRIDhIWtTP0A2Gg2xM',
   }
 };
 
 export const IMG_CDN = "https://image.tmdb.org/t/p/w500/";
+
+export const SUPPORTED_LANGUAGES = [
+  { identifier: "en", name: "English" },
+  { identifier: "hindi", name: "Hindi" },
+  { identifier: "spanish", name: "Spanish" },
+]; 

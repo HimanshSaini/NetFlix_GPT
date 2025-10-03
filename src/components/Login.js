@@ -8,113 +8,76 @@ import { addUser } from "../utils/userSlice";
 import { BG } from "../utils/constants";
 
 const Login = () => {
-  const [isSignInForm, setisSignInForm] = useState(true);   
+  const [isSignInForm, setIsSignInForm] = useState(true);   
   const [errorMessage, setErrorMessage] = useState(null);   
-  
+  const [loading, setLoading] = useState(false); // 🔥 loading state
   const dispatch = useDispatch();
 
-  // using refs so inputs are uncontrolled (value is directly read)
   const email = useRef(null);
   const name = useRef(null);
   const password = useRef(null);
-  
-  const toggleSignInForm = () => {
-    setisSignInForm(!isSignInForm);
-  };
 
-  const handleButtonClick = () => {
-    //Validate input 
-    const message = checkValidData(
-      email.current.value,
-      password.current.value
-    );
-    setErrorMessage(message);
-    if (message) return;  // stop if invalid input
+  const toggleSignInForm = () => setIsSignInForm(!isSignInForm);
 
-    if (!isSignInForm) { 
-      // --- Sign Up flow ---
-      createUserWithEmailAndPassword(
-        auth,
-        email.current.value,
-        password.current.value
-      )
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log('signup user-', user);
+  const handleButtonClick = async () => {
+    const emailValue = email.current?.value.trim();
+    const passwordValue = password.current?.value.trim();
+    const nameValue = name.current?.value.trim();
 
-        // updateProfile must be called immediately, otherwise Redux may get null displayName
-        updateProfile(user, {
-          displayName: name.current.value,
-          photoURL: null,  
-        })
-        .then(() => {
-          //console.log('updated user-', user);
+    const message = checkValidData(emailValue, passwordValue, isSignInForm ? null : nameValue);
+    if (!isSignInForm && !nameValue) {
+      setErrorMessage("Name is required");
+      return;
+    }
+    if (message) {
+      setErrorMessage(message);
+      return;
+    }
 
-          // auth.currentUser is guaranteed to exist here
-          const { uid, email, displayName, photoURL } = auth.currentUser;
+    setErrorMessage(null);
+    setLoading(true); // start shimmer
 
-          // store user in Redux
-          dispatch(
-            addUser({
-              uid,
-              email,
-              displayName,
-              photoURL,
-            })
-          );
-        })
-        .catch((error) => {
-          
-          setErrorMessage(error.message);
-        });
-      })
-      .catch((error) => {
-        
-        setErrorMessage(error.code + "-" + error.message);
-      });
-    } 
-    else {
-      // --- Sign In flow ---
-      signInWithEmailAndPassword(
-        auth,
-        email.current.value,
-        password.current.value
-      )
-      .then((userCredential) => {
-        const user = userCredential.user;
-      //  console.log('signin user-', user);
-      })
-      .catch((error) => {
-        setErrorMessage(error.code + "-" + error.message);
-      });
+    try {
+      if (!isSignInForm) {
+        // --- Sign Up ---
+        const userCredential = await createUserWithEmailAndPassword(auth, emailValue, passwordValue);
+        await updateProfile(userCredential.user, { displayName: nameValue, photoURL: null });
+
+        const { uid, email, displayName, photoURL } = auth.currentUser;
+        dispatch(addUser({ uid, email, displayName, photoURL }));
+      } else {
+        // --- Sign In ---
+        const userCredential = await signInWithEmailAndPassword(auth, emailValue, passwordValue);
+        const { uid, email, displayName, photoURL } = userCredential.user;
+        dispatch(addUser({ uid, email, displayName, photoURL }));
+      }
+    } catch (error) {
+      setErrorMessage(error.code + " - " + error.message);
+    } finally {
+      setLoading(false); // stop shimmer
     }
   };
 
   return (
     <div className="relative h-screen w-full">
-      {/* Background Image */}
+      {/* Background */}
       <div className="absolute inset-0">
-        <img
-          src={BG}
-          alt="Background"
-          className="h-full w-full object-cover"
-        />
+        <img src={BG} alt="Background" className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
       </div>
 
       <Header />
 
-      {/* Signup Form */}
+      {/* Form */}
       <div className="flex justify-center items-center h-full relative z-10">
         <form 
-          onSubmit={(e) => e.preventDefault()}  // prevents page reload
-          className="w-full max-w-md bg-black bg-opacity-80 p-10 rounded-md text-white transition-all duration-500 ease-in-out"
+          onSubmit={(e) => e.preventDefault()} 
+          className="w-full max-w-md bg-black bg-opacity-80 p-10 rounded-md text-white"
         >
           <h1 className="font-bold text-3xl mb-6">
             {isSignInForm ? "Sign In" : "Sign Up"}
           </h1>
 
-          {/* Show Full Name field only when signing up */}
           {!isSignInForm && (
             <input
               type="text"
@@ -138,14 +101,18 @@ const Login = () => {
             className="p-4 my-3 w-full rounded-md bg-gray-500 bg-opacity-30 border border-gray-400 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-600 transition"
           />
 
-          <p className="text-red-600"> {errorMessage} </p>
+          {errorMessage && <p className="text-red-600">{errorMessage}</p>}
 
+          {/* Button with shimmer */}
           <button
             type="submit"
-            className="p-3 my-4 w-full bg-red-700 hover:bg-red-800 transition rounded-md font-semibold"
+            className={`p-3 my-4 w-full rounded-md font-semibold transition 
+              ${loading ? "bg-gray-600 animate-pulse cursor-not-allowed" : "bg-red-700 hover:bg-red-800"}
+            `}
             onClick={handleButtonClick}
+            disabled={loading}
           >
-            {isSignInForm ? "Sign In" : "Sign Up"}
+            {loading ? "Loading..." : isSignInForm ? "Sign In" : "Sign Up"}
           </button>
 
           <div className="flex justify-between text-sm text-gray-400">
@@ -153,18 +120,14 @@ const Login = () => {
               <input type="checkbox" className="accent-red-600" />
               <span>Remember me</span>
             </label>
-            <a href="/" className="hover:underline">
-              Need help?
-            </a>
+            <a href="/" className="hover:underline">Need help?</a>
           </div>
 
           <p
             className="mt-6 text-white-400 hover:underline cursor-pointer"
             onClick={toggleSignInForm}
           >
-            {isSignInForm
-              ? "New to Netflix? Sign up now"
-              : "Already Registered? Sign In"}
+            {isSignInForm ? "New to Netflix? Sign up now" : "Already Registered? Sign In"}
           </p>
         </form>
       </div>

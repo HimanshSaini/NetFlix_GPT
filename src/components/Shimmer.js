@@ -1,15 +1,24 @@
 const Shimmer = () => {
   return (
-    <div className="relative w-full h-[500px] bg-gray-800 overflow-hidden rounded-lg">
-      {/* Shimmer overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 animate-[shimmer_1.5s_infinite] bg-[length:200%_100%]"></div>
+    <div className="p-6 bg-black">
+      {/* Hero section shimmer */}
+      <div className="h-[400px] w-full bg-gray-700 animate-pulse rounded-md mb-6"></div>
 
-      {/* Text placeholders */}
-      <div className="absolute bottom-8 left-8 space-y-4">
-        <div className="h-10 w-72 bg-gray-700 rounded"></div>
-        <div className="h-4 w-96 bg-gray-700 rounded"></div>
-        <div className="h-4 w-80 bg-gray-700 rounded"></div>
-        <div className="h-8 w-32 bg-gray-700 rounded mt-4"></div>
+      {/* Movie rows shimmer */}
+      <div className="space-y-6">
+        {[1, 2, 3, 4].map((row) => (
+          <div key={row}>
+            <div className="h-6 w-40 bg-gray-600 animate-pulse rounded mb-3"></div>
+            <div className="flex gap-4 overflow-x-auto">
+              {[1, 2, 3, 4, 5].map((card) => (
+                <div
+                  key={card}
+                  className="h-40 w-28 bg-gray-700 animate-pulse rounded-md"
+                ></div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
