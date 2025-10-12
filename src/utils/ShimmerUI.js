@@ -27,7 +27,7 @@ export const ShimmerBrowse = () => {
 
 
 export const ShimmerMovieCard = () => {
-  const count = 6; // Total 6 cards
+
   return (
     <div className="flex flex-col items-center gap-6 p-6 min-h-screen">
       {/* Top row */}

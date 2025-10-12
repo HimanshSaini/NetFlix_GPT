@@ -83,7 +83,7 @@ const MovieDetail = () => {
         <div className="fixed inset-0 z-0 overflow-hidden">
           <iframe
             className="w-full h-full object-cover opacity-50"
-            src={`https://www.youtube.com/embed/${video.key}?autoplay=1&mute=1&controls=0&loop=1&playlist=${video.key}`}
+            src={`https://www.youtube.com/embed/${video.key}?autoplay=1&controls=0&loop=1&playlist=${video.key}`}
             title={video.name || movie?.title}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen

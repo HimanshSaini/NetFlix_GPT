@@ -1,6 +1,6 @@
 import { IMG_CDN } from "../utils/constants";
 import { Link } from "react-router-dom";
-// eslint-disable-next-line react/prop-types
+
 const MovieCard = ({ posterPath, id }) => {
   if (!posterPath) return null;
   if (!id) return null;
@@ -10,7 +10,7 @@ const MovieCard = ({ posterPath, id }) => {
         <img
           className='rounded-xl md:hover:scale-95'
           src={IMG_CDN + posterPath}
-          alt='movie poster make it dynamic'
+          alt='movie poster'
         />
       </Link>
     </div>

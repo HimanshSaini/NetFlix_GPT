@@ -1,7 +1,8 @@
 import { FaPlay } from "react-icons/fa";
 import { ImInfo } from "react-icons/im";
+import { Link } from "react-router-dom";
 
-const VideoTitle = ({ title, overview }) => {
+const VideoTitle = ({ title, overview, movieId }) => {
   return (
     <div className="w-screen aspect-video pt-56 px-12 absolute bg-gradient-to-r from-black">
       
@@ -9,12 +10,14 @@ const VideoTitle = ({ title, overview }) => {
       <p className="w-1/3 my-6 text-white">{overview}</p>
       
       <div>
+        <Link to= {"/browse/" + movieId}>
         <button className="p-2 px-8 font-bold bg-white rounded-md border border-gray-600 hover:bg-opacity-70">
           <span className="flex">
             <FaPlay className="text-xl mt-[2px]" />{" "}
             <span className="pl-2"> Play</span>
           </span>
         </button>
+        </Link>
 
         <button className="p-2 px-6 mx-2 font-bold text-white bg-gray-700 border border-gray-600 rounded-md hover:bg-opacity-70">
           {" "}
